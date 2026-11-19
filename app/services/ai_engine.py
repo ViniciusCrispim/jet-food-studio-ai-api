@@ -50,9 +50,11 @@ class AISegmentationEngine:
             return
 
         try:
+            import os
             from pathlib import Path
 
-            model_path = Path.home() / ".u2net" / f"{self.model_name}.onnx"
+            u2net_dir = Path(os.environ.get("U2NET_HOME", str(Path.home() / ".u2net")))
+            model_path = u2net_dir / f"{self.model_name}.onnx"
             if not model_path.exists():
                 import urllib.request
 

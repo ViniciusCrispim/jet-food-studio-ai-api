@@ -1,0 +1,21 @@
+# Ambientes virtuais locais e cache Python
+.venv/
+venv/
+__pycache__/
+*.py[cod]
+*$py.class
+.pytest_cache/
+.coverage
+
+# Controle de versão e IDEs
+.git/
+.gitignore
+.vscode/
+.idea/
+
+# Arquivos temporários e documentação (não necessários dentro do runtime da imagem)
+docs/
+tests/
+README.md
+*.md
+.env

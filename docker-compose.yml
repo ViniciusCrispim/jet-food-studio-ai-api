@@ -1,0 +1,44 @@
+services:
+  jet-food-studio-api:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: jet-food-studio-ia
+    restart: unless-stopped
+    ports:
+      - "${PORT:-8000}:8000"
+    environment:
+      - APP_NAME=Jet Food Studio IA
+      - APP_ENV=${APP_ENV:-production}
+      - DEBUG=${DEBUG:-false}
+      # Troca dinâmica de modelos open-source gratuitos ("isnet-general-use", "u2net", "u2netp")
+      - AI_MODEL_NAME=${AI_MODEL_NAME:-isnet-general-use}
+      - PRELOAD_AI_MODEL=true
+      - USE_REMBG_ONNX=true
+      - MAX_UPLOAD_SIZE_MB=25
+      - MAX_PROCESSING_DIMENSION=1600
+      - WORKERS=${WORKERS:-2}
+      - OMP_NUM_THREADS=2
+    # Volume persistente: armazena os modelos ONNX fora da imagem do container,
+    # evitando novo download ao reiniciar, atualizar ou trocar de modelo.
+    volumes:
+      - ai_models_cache:/home/appuser/.u2net
+    # Limites e reservas de recursos para garantir estabilidade em produção
+    deploy:
+      resources:
+        limits:
+          cpus: "2.0"
+          memory: 2G
+        reservations:
+          cpus: "0.5"
+          memory: 768M
+    healthcheck:
+      test: ["CMD", "curl", "-f", "http://localhost:8000/api/v1/health"]
+      interval: 30s
+      timeout: 5s
+      retries: 3
+      start_period: 20s
+
+volumes:
+  ai_models_cache:
+    name: jet_food_studio_ai_models_cache

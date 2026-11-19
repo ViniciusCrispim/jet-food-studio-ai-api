@@ -98,9 +98,11 @@ jet-food-studio-ia/
 │   └── ARCHITECTURE.md              # Documentação aprofundada de arquitetura e algoritmos
 ├── tests/
 │   └── test_api.py                  # Suíte de testes automatizados de integração (Pytest)
+├── .dockerignore
 ├── .env.example
 ├── .gitignore
-├── Dockerfile
+├── Dockerfile                       # Multi-Stage Build leve com suporte a volume externo de modelos IA
+├── docker-compose.yml               # Orquestração com Volume Persistente (ai_models_cache) e Healthcheck
 ├── pytest.ini
 ├── requirements.txt
 └── README.md
@@ -231,6 +233,34 @@ uvicorn app.main:app --reload --port 8000
 Acesse no seu navegador:
 - 🖥️ **Estúdio Interativo (Antes & Depois + Guia Visual):** `http://localhost:8000/`
 - 📄 **Documentação Interativa Swagger UI:** `http://localhost:8000/docs`
+
+---
+
+## 🐳 Deploy & Escalabilidade com Docker (Produção & MLOps)
+
+Para facilitar a implantação como um microsserviço em qualquer servidor ou provedor de nuvem (**AWS ECS, Google Cloud Run, Azure Container Apps, DigitalOcean, Railway ou Render**), o projeto adota a arquitetura de **Container Leve + Volume Persistente de Modelos (MLOps Best Practice)**:
+
+### Diferenciais do Container para Desenvolvimento e Produção:
+1. **Desacoplamento entre Código e Modelos de IA (`ai_models_cache`):** A imagem Docker (`Dockerfile` Multi-Stage) empacota apenas o código-fonte e as bibliotecas Python, mantendo o *build* rápido e a imagem leve. Os pesos das redes neurais gratuitas e open-source (`isnet-general-use`, `u2net` ou `u2netp`) são armazenados em um **Docker Volume persistente** (`/home/appuser/.u2net`).
+2. **Troca Dinâmica de Modelos sem Rebuild:** Para alternar entre modelos (por exemplo, usar `u2netp` em servidores com pouca memória ou `isnet-general-use` para máxima precisão), basta alterar a variável `AI_MODEL_NAME` no `.env` ou no `docker-compose.yml` e reiniciar o container — sem precisar reconstruir a imagem Docker.
+3. **Controle de Concorrência e Prevenção de *CPU Thrashing*:** Variáveis `OMP_NUM_THREADS=2`, `OPENBLAS_NUM_THREADS=2` e `WORKERS=2` calibradas para que múltiplos processos Uvicorn executem inferências simultâneas no OpenCV e ONNX Runtime sem disputar os mesmos núcleos de CPU.
+4. **Segurança & Observabilidade:** Execução sob usuário sem privilégios de superusuário (`appuser`) e `HEALTHCHECK` nativo integrado ao endpoint `/api/v1/health`.
+
+### Como subir com Docker Compose (1 Comando):
+```bash
+# Constrói a imagem leve e inicia o container com volume persistente de modelos
+docker compose up -d --build
+
+# Verificar logs e status de saúde (healthy)
+docker compose ps
+docker compose logs -f
+```
+
+### Ou executando via Docker CLI puro (com volume nomeado):
+```bash
+docker build -t jet-food-studio-ia:latest .
+docker run -d -p 8000:8000 -v jet_food_studio_ai_models_cache:/home/appuser/.u2net --name jet-food-studio jet-food-studio-ia:latest
+```
 
 ---
 

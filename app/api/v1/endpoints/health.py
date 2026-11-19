@@ -32,7 +32,7 @@ async def health_check() -> dict:
                 "transparent",
             ],
             "framing_presets": [
-                "ifood_standard (1200x900)",
+                "delivery_standard (1200x900)",
                 "square_catalog (800x800)",
                 "hd_showcase (1280x720)",
                 "original",

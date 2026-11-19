@@ -6,7 +6,7 @@ from pydantic import BaseModel, Field
 class StudioBackgroundPreset(str, Enum):
     """Estratégias de fundo padronizado para cardápios de delivery."""
 
-    CLEAN_STUDIO = "clean_studio"       # Fundo branco/off-white suave de estúdio (padrão iFood/catálogo)
+    CLEAN_STUDIO = "clean_studio"       # Fundo branco/off-white suave de estúdio (padrão de catálogo)
     WARM_BISTRO = "warm_bistro"         # Creme quente aconchegante (padarias, doces, massas, cafés)
     DARK_SLATE = "dark_slate"           # Ardósia escura gourmet (hambúrguer artesanal, sushi, carnes)
     RUSTIC_WOOD = "rustic_wood"         # Tom amadeirado quente (pizzas, churrasco, porções)
@@ -16,10 +16,10 @@ class StudioBackgroundPreset(str, Enum):
 class FramingPreset(str, Enum):
     """Padrões de proporção e resolução para aplicativos de delivery."""
 
-    IFOOD_STANDARD = "ifood_standard"   # 1200x900 (Proporção 4:3 oficial recomendada pelo iFood)
-    SQUARE_CATALOG = "square_catalog"   # 800x800 (Proporção 1:1 para cards compactos e Instagram)
-    HD_SHOWCASE = "hd_showcase"         # 1280x720 (Proporção 16:9 para banners de destaque)
-    ORIGINAL = "original"               # Mantém as dimensões originais da foto enviada
+    DELIVERY_STANDARD = "delivery_standard"   # 1200x900 (Proporção 4:3 recomendada para plataformas de delivery)
+    SQUARE_CATALOG = "square_catalog"         # 800x800 (Proporção 1:1 para cards compactos e redes sociais)
+    HD_SHOWCASE = "hd_showcase"               # 1280x720 (Proporção 16:9 para banners de destaque)
+    ORIGINAL = "original"                     # Mantém as dimensões originais da foto enviada
 
 
 class EnhancementIntensity(str, Enum):
@@ -41,7 +41,11 @@ class StudioProcessOptions(BaseModel):
 
     remove_background: bool = Field(
         default=True,
-        description="Recorta o prato/alimento removendo o fundo original via IA (U²-Net).",
+        description="Recorta o prato/alimento removendo o fundo original via IA (IS-Net / U²-Net).",
+    )
+    preserve_plate_rim: bool = Field(
+        default=True,
+        description="Reconstrói e preserva o contorno completo do prato/louça ao redor da comida para evitar efeito de comida flutuando.",
     )
     background_preset: StudioBackgroundPreset = Field(
         default=StudioBackgroundPreset.CLEAN_STUDIO,
@@ -60,8 +64,8 @@ class StudioProcessOptions(BaseModel):
         description="Projeta sombra suave de contato na base do prato para dar profundidade realista.",
     )
     framing_preset: FramingPreset = Field(
-        default=FramingPreset.IFOOD_STANDARD,
-        description="Padronização de enquadramento e resolução para delivery.",
+        default=FramingPreset.DELIVERY_STANDARD,
+        description="Padronização de enquadramento e resolução para plataformas de delivery.",
     )
     padding_ratio: float = Field(
         default=0.12,

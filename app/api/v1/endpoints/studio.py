@@ -39,6 +39,10 @@ router = APIRouter(prefix="/studio", tags=["Estúdio Gastronômico IA (Processam
 async def process_food_image(
     file: UploadFile = File(..., description="Foto original do prato (JPEG, PNG ou WEBP)"),
     remove_background: bool = Form(True, description="Recortar o prato removendo o fundo original via IA"),
+    preserve_plate_rim: bool = Form(
+        True,
+        description="Preservar e reconstruir a borda completa do prato/louça ao redor da comida",
+    ),
     background_preset: StudioBackgroundPreset = Form(
         StudioBackgroundPreset.CLEAN_STUDIO,
         description="Estilo de fundo padronizado de estúdio",
@@ -56,8 +60,8 @@ async def process_food_image(
         description="Adicionar sombra realista de contato na base do prato",
     ),
     framing_preset: FramingPreset = Form(
-        FramingPreset.IFOOD_STANDARD,
-        description="Enquadramento e proporção de saída (ifood_standard=1200x900, square_catalog=800x800, hd_showcase=1280x720, original)",
+        FramingPreset.DELIVERY_STANDARD,
+        description="Enquadramento e proporção de saída (delivery_standard=1200x900, square_catalog=800x800, hd_showcase=1280x720, original)",
     ),
     padding_ratio: float = Form(
         0.12,
@@ -81,6 +85,7 @@ async def process_food_image(
 
     options = StudioProcessOptions(
         remove_background=remove_background,
+        preserve_plate_rim=preserve_plate_rim,
         background_preset=background_preset,
         custom_bg_hex=custom_bg_hex,
         enhancement_intensity=enhancement_intensity,
@@ -122,11 +127,12 @@ async def process_food_image(
 async def compare_before_and_after(
     file: UploadFile = File(..., description="Foto original do prato"),
     remove_background: bool = Form(True),
+    preserve_plate_rim: bool = Form(True),
     background_preset: StudioBackgroundPreset = Form(StudioBackgroundPreset.CLEAN_STUDIO),
     custom_bg_hex: Optional[str] = Form(None),
     enhancement_intensity: EnhancementIntensity = Form(EnhancementIntensity.BALANCED),
     add_contact_shadow: bool = Form(True),
-    framing_preset: FramingPreset = Form(FramingPreset.IFOOD_STANDARD),
+    framing_preset: FramingPreset = Form(FramingPreset.DELIVERY_STANDARD),
     padding_ratio: float = Form(0.12),
     output_format: OutputFormat = Form(OutputFormat.WEBP),
     output_quality: int = Form(92),
@@ -136,6 +142,7 @@ async def compare_before_and_after(
 
     options = StudioProcessOptions(
         remove_background=remove_background,
+        preserve_plate_rim=preserve_plate_rim,
         background_preset=background_preset,
         custom_bg_hex=custom_bg_hex,
         enhancement_intensity=enhancement_intensity,

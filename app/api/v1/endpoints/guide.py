@@ -26,10 +26,10 @@ async def get_photography_guide() -> PhotographyGuideResponse:
             "autênticas e padronizadas dos seus próprios pratos usando apenas um smartphone."
         ),
         minimum_requirements={
-            "recommended_resolution": "1200x900 pixels (Proporção 4:3 — Padrão iFood)",
+            "recommended_resolution": "1200x900 pixels (Proporção 4:3 — Padrão para Plataformas de Delivery)",
             "minimum_resolution": "800x600 pixels",
             "accepted_formats": ["JPEG", "PNG", "WEBP"],
-            "max_file_size_mb": 10,
+            "max_file_size_mb": 25,
         },
         golden_rules=[
             GoldenRule(

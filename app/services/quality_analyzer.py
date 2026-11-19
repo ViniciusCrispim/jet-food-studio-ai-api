@@ -99,10 +99,11 @@ class FoodPhotoQualityAnalyzer:
             recommendations=recommendations,
             suggested_studio_params={
                 "remove_background": True,
+                "preserve_plate_rim": True,
                 "background_preset": "clean_studio",
                 "enhancement_intensity": suggested_intensity,
                 "add_contact_shadow": True,
-                "framing_preset": "ifood_standard",
+                "framing_preset": "delivery_standard",
             },
         )
 
@@ -234,7 +235,7 @@ class FoodPhotoQualityAnalyzer:
         if width >= 1000 and height >= 750:
             score = 98
             status = "Alta Definição"
-            feedback = f"Resolução excelente ({width}x{height}px) para plataformas como iFood."
+            feedback = f"Resolução excelente ({width}x{height}px) para plataformas de delivery."
             rec = None
         elif min_side >= 500:
             score = 78

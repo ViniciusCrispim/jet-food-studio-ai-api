@@ -24,7 +24,10 @@ class BackgroundRemovalStep(PipelineStep):
             context.metadata["segmentation_engine"] = "bypassed"
             return context
 
-        context.current_image = ai_engine.remove_background(context.current_image)
+        context.current_image = ai_engine.remove_background(
+            context.current_image,
+            preserve_plate_rim=context.options.preserve_plate_rim,
+        )
         context.metadata["segmentation_engine"] = ai_engine.engine_type
         return context
 
@@ -125,12 +128,12 @@ class FoodColorAndLightEnhancementStep(PipelineStep):
 class StudioFramingAndCompositionStep(PipelineStep):
     """
     Etapa 3: Centralização inteligente do alimento (Auto-Crop da bounding box do canal Alpha),
-    padronização de resolução/proporção (ex: 1200x900 padrão iFood) e aplicação do fundo de estúdio
+    padronização de resolução/proporção (ex: 1200x900 padrão de delivery) e aplicação do fundo de estúdio
     com sombra de contato realista.
     """
 
     FRAMING_DIMENSIONS = {
-        FramingPreset.IFOOD_STANDARD: (1200, 900),
+        FramingPreset.DELIVERY_STANDARD: (1200, 900),
         FramingPreset.SQUARE_CATALOG: (800, 800),
         FramingPreset.HD_SHOWCASE: (1280, 720),
     }

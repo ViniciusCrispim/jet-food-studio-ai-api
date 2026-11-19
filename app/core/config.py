@@ -10,7 +10,7 @@ class Settings(BaseSettings):
     APP_VERSION: str = "1.0.0"
     APP_DESCRIPTION: str = (
         "Microsserviço de Visão Computacional e IA para padronização, diagnóstico "
-        "e tratamento gastronômico de fotos de cardápio para plataformas de delivery (iFood)."
+        "e tratamento gastronômico de fotos de cardápio para plataformas de delivery."
     )
     APP_ENV: str = "development"
     DEBUG: bool = True
@@ -18,18 +18,23 @@ class Settings(BaseSettings):
     PORT: int = 8000
 
     # Limites e Segurança
-    MAX_UPLOAD_SIZE_MB: int = 10
+    MAX_UPLOAD_SIZE_MB: int = 25
+    MAX_PROCESSING_DIMENSION: int = 1600
     ALLOWED_MIME_TYPES: List[str] = [
         "image/jpeg",
         "image/jpg",
         "image/png",
         "image/webp",
+        "image/heic",
+        "image/heif",
     ]
     ALLOWED_ORIGINS: List[str] = ["*"]
 
     # Motor de IA e Concorrência
-    AI_MODEL_NAME: str = "u2netp"
+    # "isnet-general-use" ou "u2net" preservam o prato/louça junto com a comida muito melhor que "u2netp"
+    AI_MODEL_NAME: str = "isnet-general-use"
     PRELOAD_AI_MODEL: bool = True
+    USE_REMBG_ONNX: bool = True
     MAX_WORKER_THREADS: int = 4
 
     # Padrões de Saída

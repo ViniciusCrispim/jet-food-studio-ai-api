@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="pt-BR">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+  <title>Jet Food Studio IA — Estúdio Fotográfico Inteligente para Delivery</title>
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    @import url('https://fonts.googleapis.com/css2?family=Plus+Jakarta+Sans:wght@400;500;600;700;800&display=swap');
+    body {
+      font-family: 'Plus Jakarta Sans', sans-serif;
+      background-color: #0b0e14;
+      color: #f1f5f9;
+    }
+    .checkerboard {
+      background-image:
+        linear-gradient(45deg, #1e293b 25%, transparent 25%),
+        linear-gradient(-45deg, #1e293b 25%, transparent 25%),
+        linear-gradient(45deg, transparent 75%, #1e293b 75%),
+        linear-gradient(-45deg, transparent 75%, #1e293b 75%);
+      background-size: 20px 20px;
+      background-position: 0 0, 0 10px, 10px -10px, -10px 0px;
+    }
+    .comparison-container {
+      position: relative;
+      overflow: hidden;
+      user-select: none;
+      border-radius: 0.75rem;
+    }
+    .comparison-before {
+      position: absolute;
+      top: 0;
+      left: 0;
+      height: 100%;
+      width: 100%;
+      overflow: hidden;
+      clip-path: inset(0 50% 0 0);
+    }
+    .slider-line {
+      position: absolute;
+      top: 0;
+      bottom: 0;
+      left: 50%;
+      width: 3px;
+      background: #ef4444;
+      transform: translateX(-50%);
+      pointer-events: none;
+      box-shadow: 0 0 12px rgba(239, 68, 68, 0.8);
+    }
+    .slider-button {
+      position: absolute;
+      top: 50%;
+      left: 50%;
+      transform: translate(-50%, -50%);
+      width: 40px;
+      height: 40px;
+      border-radius: 9999px;
+      background: #ef4444;
+      color: white;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      font-weight: 800;
+      box-shadow: 0 4px 15px rgba(0,0,0,0.45);
+      pointer-events: none;
+    }
+  </style>
+</head>
+<body class="min-h-screen flex flex-col">
+  <!-- Top Navbar -->
+  <header class="border-b border-slate-800/80 bg-slate-950/70 backdrop-blur sticky top-0 z-30">
+    <div class="max-w-7xl mx-auto px-4 sm:px-6 py-4 flex flex-wrap items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <div class="w-10 h-10 rounded-xl bg-gradient-to-br from-red-500 to-amber-500 flex items-center justify-center text-xl shadow-lg shadow-red-500/20">
+          🍔
+        </div>
+        <div>
+          <div class="flex items-center gap-2">
+            <h1 class="text-lg font-extrabold tracking-tight text-white">Jet Food Studio <span class="text-red-500">IA</span></h1>
+            <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">v1.0 API</span>
+          </div>
+          <p class="text-xs text-slate-400">Padronização & Tratamento Inteligente de Fotos Gastronômicas para Delivery</p>
+        </div>
+      </div>
+
+      <div class="flex items-center gap-3">
+        <button onclick="switchTab('studio')" id="tab-btn-studio" class="px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white transition">
+          ✨ Estúdio Antes & Depois
+        </button>
+        <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
+          📸 Guia do Vendedor
+        </button>
+        <a href="/docs" target="_blank" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:border-red-500/50 transition">
+          ⚡ Swagger Docs
+        </a>
+      </div>
+    </div>
+  </header>
+
+  <!-- Main Content -->
+  <main class="max-w-7xl mx-auto w-full px-4 sm:px-6 py-8 flex-1">
+    <!-- TAB 1: STUDIO PLAYGROUND -->
+    <section id="tab-studio" class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+      <!-- Left Column: Controls -->
+      <div class="lg:col-span-4 space-y-6">
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <div class="flex items-center justify-between">
+            <h2 class="text-base font-bold text-white">1. Foto do Prato</h2>
+            <button type="button" onclick="loadSampleBurger()" class="text-xs font-semibold text-amber-400 hover:text-amber-300 underline">
+              Gerar Foto Demo para Testar
+            </button>
+          </div>
+
+          <label for="file-input" class="block cursor-pointer border-2 border-dashed border-slate-700 hover:border-red-500/70 rounded-xl p-5 text-center transition bg-slate-950/40">
+            <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleFileSelect(event)" />
+            <div class="text-2xl mb-1">📷</div>
+            <p id="file-label" class="text-sm font-medium text-slate-200">Clique para enviar a foto do prato</p>
+            <p class="text-xs text-slate-500 mt-1">JPEG, PNG ou WEBP (Máx. 10MB)</p>
+          </label>
+
+          <hr class="border-slate-800" />
+
+          <h2 class="text-base font-bold text-white">2. Configurações do Estúdio</h2>
+
+          <!-- Preset de Fundo -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Fundo Padronizado</label>
+            <select id="background_preset" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+              <option value="clean_studio">🤍 Clean Studio (Branco Suave iFood)</option>
+              <option value="warm_bistro">🥐 Warm Bistro (Creme Quente / Confeitaria)</option>
+              <option value="dark_slate">🖤 Dark Slate (Ardósia Gourmet / Burger & Sushi)</option>
+              <option value="rustic_wood">🪵 Rustic Wood (Amadeirado / Pizzas & Carnes)</option>
+              <option value="transparent">🏁 Transparente (PNG/WEBP Recortado)</option>
+            </select>
+          </div>
+
+          <!-- Enquadramento Delivery -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Formato / Proporção Delivery</label>
+            <select id="framing_preset" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+              <option value="ifood_standard">🛵 Padrão iFood (1200x900 - 4:3)</option>
+              <option value="square_catalog">🔲 Catálogo Quadrado (800x800 - 1:1)</option>
+              <option value="hd_showcase">🖥️ Banner Vitrine HD (1280x720 - 16:9)</option>
+              <option value="original">📐 Manter Dimensões Originais</option>
+            </select>
+          </div>
+
+          <!-- Intensidade de Realce -->
+          <div>
+            <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Realce de Iluminação & Cor (LAB CLAHE)</label>
+            <select id="enhancement_intensity" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
+              <option value="balanced" selected>⚖️ Equilibrado (Recomendado)</option>
+              <option value="vibrant">🔥 Intenso (Recuperar Fotos Escuras/Apagadas)</option>
+              <option value="subtle">🌿 Sutil (Fotos Já Bem Iluminadas)</option>
+            </select>
+          </div>
+
+          <!-- Checkboxes -->
+          <div class="space-y-2.5 pt-1">
+            <label class="flex items-center gap-2.5 text-sm text-slate-300 cursor-pointer">
+              <input id="remove_background" type="checkbox" checked class="w-4 h-4 accent-red-600 rounded" />
+              <span>Recortar fundo original com IA (U²-Net)</span>
+            </label>
+            <label class="flex items-center gap-2.5 text-sm text-slate-300 cursor-pointer">
+              <input id="add_contact_shadow" type="checkbox" checked class="w-4 h-4 accent-red-600 rounded" />
+              <span>Projetar sombra realista de contato na base</span>
+            </label>
+          </div>
+
+          <!-- Action Buttons -->
+          <div class="pt-2 flex flex-col gap-2.5">
+            <button id="process-btn" onclick="processImage()" class="w-full py-3 px-4 rounded-xl font-bold text-sm bg-gradient-to-r from-red-600 to-amber-600 hover:from-red-500 hover:to-amber-500 text-white shadow-lg shadow-red-600/25 transition flex items-center justify-center gap-2">
+              <span>✨ Padronizar Foto do Prato</span>
+            </button>
+          </div>
+        </div>
+      </div>
+
+      <!-- Right Column: Before/After Preview & Diagnostics -->
+      <div class="lg:col-span-8 space-y-6">
+        <!-- Before & After Comparison Card -->
+        <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+          <div class="flex flex-wrap items-center justify-between gap-4 mb-4">
+            <div>
+              <h2 class="text-base font-bold text-white">Comparador Interativo: Antes vs. Depois</h2>
+              <p class="text-xs text-slate-400">Arraste o controle abaixo para comparar a foto original com a versão padronizada pelo estúdio</p>
+            </div>
+            <div id="telemetry-badges" class="hidden flex items-center gap-2">
+              <span id="badge-time" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-emerald-500/10 text-emerald-400 border border-emerald-500/20"></span>
+              <span id="badge-dim" class="text-xs font-semibold px-2.5 py-1 rounded-lg bg-slate-800 text-slate-300"></span>
+              <a id="download-btn" href="#" download="prato_padronizado.webp" class="text-xs font-bold px-3 py-1 rounded-lg bg-red-600 hover:bg-red-500 text-white transition">
+                ⬇️ Baixar Foto
+              </a>
+            </div>
+          </div>
+
+          <!-- Empty State -->
+          <div id="empty-preview" class="h-[420px] rounded-xl border border-slate-800 bg-slate-950/60 flex flex-col items-center justify-center text-center p-6">
+            <div class="text-4xl mb-3">🍽️</div>
+            <p class="text-sm font-semibold text-slate-300">Nenhuma foto carregada ainda</p>
+            <p class="text-xs text-slate-500 max-w-md mt-1">
+              Envie a foto de um prato à esquerda ou clique em <button onclick="loadSampleBurger()" class="text-amber-400 underline font-semibold">Gerar Foto Demo para Testar</button> para ver o recorte, correção de iluminação e fundo de estúdio em ação.
+            </p>
+          </div>
+
+          <!-- Interactive Slider Container -->
+          <div id="comparison-wrapper" class="hidden space-y-3">
+            <div class="comparison-container checkerboard h-[440px] w-full flex items-center justify-center">
+              <!-- AFTER IMAGE (Full base layer) -->
+              <img id="img-after" src="" alt="Depois" class="w-full h-full object-contain" />
+              <!-- BEFORE IMAGE (Clipped overlay layer) -->
+              <div id="before-clip" class="comparison-before bg-slate-950">
+                <img id="img-before" src="" alt="Antes" class="w-full h-full object-contain" />
+              </div>
+              <!-- Labels -->
+              <span class="absolute top-3 left-3 text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-black/70 text-slate-200 backdrop-blur">
+                Original (Antes)
+              </span>
+              <span class="absolute top-3 right-3 text-[11px] font-bold uppercase px-2.5 py-1 rounded-md bg-red-600/90 text-white backdrop-blur">
+                Jet Food Studio IA (Depois)
+              </span>
+              <!-- Divider Line & Handle -->
+              <div id="slider-line" class="slider-line"></div>
+              <div id="slider-button" class="slider-button">↔</div>
+            </div>
+
+            <input id="compare-range" type="range" min="0" max="100" value="50" oninput="updateComparisonSlider(this.value)" class="w-full accent-red-500 cursor-ew-resize" />
+          </div>
+        </div>
+
+        <!-- Quality Analysis Report Card -->
+        <div id="analysis-card" class="hidden bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-5">
+          <div class="flex flex-wrap items-center justify-between gap-4">
+            <div>
+              <h3 class="text-base font-bold text-white">📊 Diagnóstico de Qualidade por Visão Computacional</h3>
+              <p id="analysis-summary" class="text-xs text-slate-400 mt-0.5"></p>
+            </div>
+            <div class="flex items-center gap-3">
+              <div class="text-right">
+                <span class="text-[11px] uppercase text-slate-400 block">Nota Original</span>
+                <span id="score-before" class="text-xl font-extrabold text-amber-400">--</span>
+              </div>
+              <span class="text-slate-600 text-lg">→</span>
+              <div class="text-right">
+                <span class="text-[11px] uppercase text-slate-400 block">Pós-Estúdio</span>
+                <span id="score-after" class="text-xl font-extrabold text-emerald-400">--</span>
+              </div>
+            </div>
+          </div>
+
+          <div id="metrics-grid" class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-3"></div>
+
+          <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4">
+            <h4 class="text-xs font-bold uppercase tracking-wider text-amber-400 mb-2">💡 Orientações da IA para o Vendedor</h4>
+            <ul id="recommendations-list" class="text-xs text-slate-300 space-y-1.5 list-disc list-inside"></ul>
+          </div>
+        </div>
+      </div>
+    </section>
+
+    <!-- TAB 2: SELLER PHOTOGRAPHY GUIDE -->
+    <section id="tab-guide" class="hidden space-y-8">
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h2 id="guide-title" class="text-xl font-extrabold text-white">Guia Prático de Fotografia Gastronômica</h2>
+        <p id="guide-purpose" class="text-sm text-slate-400 mt-1"></p>
+
+        <div id="golden-rules-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"></div>
+      </div>
+
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
+        <h3 class="text-base font-bold text-white mb-4">🍕 Ângulo e Iluminação Ideal por Categoria de Cardápio</h3>
+        <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    let selectedFile = null;
+
+    function switchTab(tab) {
+      const isStudio = tab === 'studio';
+      document.getElementById('tab-studio').classList.toggle('hidden', !isStudio);
+      document.getElementById('tab-guide').classList.toggle('hidden', isStudio);
+      document.getElementById('tab-btn-studio').className = isStudio
+        ? 'px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white transition'
+        : 'px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition';
+      document.getElementById('tab-btn-guide').className = !isStudio
+        ? 'px-4 py-2 rounded-lg text-sm font-semibold bg-red-600 text-white transition'
+        : 'px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition';
+
+      if (!isStudio) loadGuideData();
+    }
+
+    function updateComparisonSlider(val) {
+      const rightClip = 100 - Number(val);
+      document.getElementById('before-clip').style.clipPath = `inset(0 ${rightClip}% 0 0)`;
+      document.getElementById('slider-line').style.left = `${val}%`;
+      document.getElementById('slider-button').style.left = `${val}%`;
+    }
+
+    function handleFileSelect(event) {
+      const file = event.target.files[0];
+      if (!file) return;
+      selectedFile = file;
+      document.getElementById('file-label').textContent = `${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+
+      const reader = new FileReader();
+      reader.onload = (e) => {
+        document.getElementById('img-before').src = e.target.result;
+        document.getElementById('img-after').src = e.target.result;
+        document.getElementById('empty-preview').classList.add('hidden');
+        document.getElementById('comparison-wrapper').classList.remove('hidden');
+        updateComparisonSlider(50);
+      };
+      reader.readAsDataURL(file);
+    }
+
+    // Gera uma foto realista simulando um hambúrguer mal iluminado em um balcão escuro para demonstração imediata
+    function loadSampleBurger() {
+      const canvas = document.createElement('canvas');
+      canvas.width = 960;
+      canvas.height = 720;
+      const ctx = canvas.getContext('2d');
+
+      // Fundo de cozinha mal iluminado e desigual
+      const bgGrad = ctx.createLinearGradient(0, 0, 960, 720);
+      bgGrad.addColorStop(0, '#3a342e');
+      bgGrad.addColorStop(0.6, '#4f463d');
+      bgGrad.addColorStop(1, '#26211d');
+      ctx.fillStyle = bgGrad;
+      ctx.fillRect(0, 0, 960, 720);
+
+      // Balcão
+      ctx.fillStyle = '#332b24';
+      ctx.fillRect(0, 480, 960, 240);
+
+      // Prato cerâmico
+      ctx.beginPath();
+      ctx.ellipse(480, 505, 250, 62, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#9ca3af';
+      ctx.fill();
+
+      // Pão inferior
+      ctx.beginPath();
+      ctx.roundRect(330, 430, 300, 62, [18, 18, 35, 35]);
+      ctx.fillStyle = '#a4642e';
+      ctx.fill();
+
+      // Hambúrguer grelhado
+      ctx.beginPath();
+      ctx.roundRect(315, 368, 330, 70, 28);
+      ctx.fillStyle = '#4e2718';
+      ctx.fill();
+
+      // Queijo cheddar derretido
+      ctx.beginPath();
+      ctx.moveTo(325, 372);
+      ctx.lineTo(635, 372);
+      ctx.lineTo(610, 405);
+      ctx.lineTo(540, 382);
+      ctx.lineTo(480, 418);
+      ctx.lineTo(410, 385);
+      ctx.lineTo(350, 408);
+      ctx.closePath();
+      ctx.fillStyle = '#d9821b';
+      ctx.fill();
+
+      // Tomate e Alface
+      ctx.beginPath();
+      ctx.roundRect(335, 340, 290, 32, 12);
+      ctx.fillStyle = '#3f7d2f';
+      ctx.fill();
+
+      ctx.beginPath();
+      ctx.roundRect(350, 322, 260, 24, 10);
+      ctx.fillStyle = '#b63125';
+      ctx.fill();
+
+      // Pão brioche superior
+      ctx.beginPath();
+      ctx.arc(480, 330, 155, Math.PI, 0, false);
+      ctx.closePath();
+      ctx.fillStyle = '#b56c2d';
+      ctx.fill();
+
+      // Gergelim
+      ctx.fillStyle = '#e6d3a7';
+      [[430, 240], [475, 225], [525, 242], [450, 270], [505, 268], [395, 275], [555, 275]].forEach(([x, y]) => {
+        ctx.beginPath();
+        ctx.ellipse(x, y, 6, 3, 0.3, 0, Math.PI * 2);
+        ctx.fill();
+      });
+
+      canvas.toBlob((blob) => {
+        selectedFile = new File([blob], 'burger_balcao_cozinha.jpg', { type: 'image/jpeg' });
+        document.getElementById('file-label').textContent = `${selectedFile.name} (Demo Gerada)`;
+        const url = URL.createObjectURL(blob);
+        document.getElementById('img-before').src = url;
+        document.getElementById('img-after').src = url;
+        document.getElementById('empty-preview').classList.add('hidden');
+        document.getElementById('comparison-wrapper').classList.remove('hidden');
+        updateComparisonSlider(50);
+        processImage();
+      }, 'image/jpeg', 0.9);
+    }
+
+    async function processImage() {
+      if (!selectedFile) {
+        alert('Selecione uma foto do prato ou clique em "Gerar Foto Demo para Testar" primeiro!');
+        return;
+      }
+
+      const btn = document.getElementById('process-btn');
+      const originalText = btn.innerHTML;
+      btn.disabled = true;
+      btn.innerHTML = '<span>⏳ Processando no Pipeline IA...</span>';
+
+      try {
+        const formData = new FormData();
+        formData.append('file', selectedFile);
+        formData.append('background_preset', document.getElementById('background_preset').value);
+        formData.append('framing_preset', document.getElementById('framing_preset').value);
+        formData.append('enhancement_intensity', document.getElementById('enhancement_intensity').value);
+        formData.append('remove_background', document.getElementById('remove_background').checked);
+        formData.append('add_contact_shadow', document.getElementById('add_contact_shadow').checked);
+
+        const response = await fetch('/api/v1/studio/compare', {
+          method: 'POST',
+          body: formData
+        });
+
+        const data = await response.json();
+        if (!response.ok) {
+          throw new Error(data.message || 'Falha ao processar a imagem');
+        }
+
+        document.getElementById('img-after').src = data.processed_image_data_url;
+        document.getElementById('download-btn').href = data.processed_image_data_url;
+
+        document.getElementById('telemetry-badges').classList.remove('hidden');
+        document.getElementById('badge-time').textContent = `⚡ ${data.processing_time_ms} ms (${data.segmentation_engine})`;
+        document.getElementById('badge-dim').textContent = `📐 ${data.final_dimensions} · ${data.output_size_kb} KB`;
+
+        renderAnalysisReport(data.before_analysis, data.after_analysis);
+      } catch (err) {
+        alert('Erro: ' + err.message);
+      } finally {
+        btn.disabled = false;
+        btn.innerHTML = originalText;
+      }
+    }
+
+    function renderAnalysisReport(before, after) {
+      document.getElementById('analysis-card').classList.remove('hidden');
+      document.getElementById('analysis-summary').textContent = before.summary;
+      document.getElementById('score-before').textContent = `${before.overall_score}/100`;
+      document.getElementById('score-after').textContent = `${after.overall_score}/100`;
+
+      const grid = document.getElementById('metrics-grid');
+      grid.innerHTML = before.metrics.map((m, idx) => {
+        const afterM = after.metrics[idx];
+        return `
+          <div class="bg-slate-950/80 border border-slate-800/90 rounded-xl p-3.5">
+            <div class="flex items-center justify-between mb-1">
+              <span class="text-xs font-bold text-slate-200">${m.name}</span>
+              <span class="text-xs font-extrabold text-emerald-400">${m.score} → ${afterM ? afterM.score : m.score}</span>
+            </div>
+            <p class="text-[11px] text-slate-400">${m.feedback}</p>
+          </div>
+        `;
+      }).join('');
+
+      const recList = document.getElementById('recommendations-list');
+      recList.innerHTML = before.recommendations.map(r => `<li>${r}</li>`).join('');
+    }
+
+    async function loadGuideData() {
+      const res = await fetch('/api/v1/guide');
+      const data = await res.json();
+      document.getElementById('guide-title').textContent = data.title;
+      document.getElementById('guide-purpose').textContent = data.purpose;
+
+      document.getElementById('golden-rules-grid').innerHTML = data.golden_rules.map(rule => `
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-2">
+          <h4 class="text-sm font-bold text-white">${rule.title}</h4>
+          <p class="text-xs text-slate-400">${rule.description}</p>
+          <div class="text-xs text-emerald-400">✅ <strong>Faça:</strong> ${rule.do}</div>
+          <div class="text-xs text-red-400">❌ <strong>Evite:</strong> ${rule.dont}</div>
+        </div>
+      `).join('');
+
+      document.getElementById('categories-grid').innerHTML = data.category_recommendations.map(cat => `
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-1.5">
+          <div class="flex items-center justify-between">
+            <h4 class="text-sm font-bold text-amber-400">${cat.category}</h4>
+            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Preset: ${cat.recommended_preset}</span>
+          </div>
+          <p class="text-xs text-slate-300"><strong>Ângulo:</strong> ${cat.ideal_angle}</p>
+          <p class="text-xs text-slate-300"><strong>Luz:</strong> ${cat.lighting_tip}</p>
+          <p class="text-xs text-slate-400"><strong>Montagem:</strong> ${cat.staging_tip}</p>
+        </div>
+      `).join('');
+    }
+  </script>
+</body>
+</html>

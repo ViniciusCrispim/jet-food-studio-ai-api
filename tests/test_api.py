@@ -72,10 +72,11 @@ def test_studio_process_pipeline_endpoint(client: TestClient):
         files={"file": ("burger.jpg", img_bytes, "image/jpeg")},
         data={
             "remove_background": "true",
+            "preserve_plate_rim": "true",
             "background_preset": "clean_studio",
             "enhancement_intensity": "balanced",
             "add_contact_shadow": "true",
-            "framing_preset": "ifood_standard",
+            "framing_preset": "delivery_standard",
             "output_format": "WEBP",
         },
     )

@@ -77,7 +77,7 @@
         <div>
           <div class="flex items-center gap-2">
             <h1 class="text-lg font-extrabold tracking-tight text-white">Jet Food Studio <span class="text-red-500">IA</span></h1>
-            <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">v1.0 API</span>
+            <span class="text-[11px] font-semibold uppercase px-2 py-0.5 rounded-full bg-red-500/10 text-red-400 border border-red-500/20">v1.1 API</span>
           </div>
           <p class="text-xs text-slate-400">Padronização & Tratamento Inteligente de Fotos Gastronômicas para Delivery</p>
         </div>
@@ -88,7 +88,7 @@
           ✨ Estúdio Antes & Depois
         </button>
         <button onclick="switchTab('guide')" id="tab-btn-guide" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-800 text-slate-300 hover:bg-slate-700 transition">
-          📸 Guia do Vendedor
+          📸 Guia Visual do Vendedor
         </button>
         <a href="/docs" target="_blank" class="px-4 py-2 rounded-lg text-sm font-semibold bg-slate-900 border border-slate-700 text-slate-300 hover:border-red-500/50 transition">
           ⚡ Swagger Docs
@@ -115,7 +115,7 @@
             <input id="file-input" type="file" accept="image/jpeg,image/png,image/webp" class="hidden" onchange="handleFileSelect(event)" />
             <div class="text-2xl mb-1">📷</div>
             <p id="file-label" class="text-sm font-medium text-slate-200">Clique para enviar a foto do prato</p>
-            <p class="text-xs text-slate-500 mt-1">JPEG, PNG ou WEBP (Máx. 10MB)</p>
+            <p class="text-xs text-slate-500 mt-1">JPEG, PNG ou WEBP (Até 25MB — Otimizado automaticamente)</p>
           </label>
 
           <hr class="border-slate-800" />
@@ -126,7 +126,7 @@
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Fundo Padronizado</label>
             <select id="background_preset" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
-              <option value="clean_studio">🤍 Clean Studio (Branco Suave iFood)</option>
+              <option value="clean_studio">🤍 Clean Studio (Branco Suave de Estúdio)</option>
               <option value="warm_bistro">🥐 Warm Bistro (Creme Quente / Confeitaria)</option>
               <option value="dark_slate">🖤 Dark Slate (Ardósia Gourmet / Burger & Sushi)</option>
               <option value="rustic_wood">🪵 Rustic Wood (Amadeirado / Pizzas & Carnes)</option>
@@ -138,7 +138,7 @@
           <div>
             <label class="block text-xs font-semibold uppercase tracking-wider text-slate-400 mb-2">Formato / Proporção Delivery</label>
             <select id="framing_preset" class="w-full bg-slate-950 border border-slate-800 rounded-xl px-3.5 py-2.5 text-sm text-white focus:outline-none focus:border-red-500">
-              <option value="ifood_standard">🛵 Padrão iFood (1200x900 - 4:3)</option>
+              <option value="delivery_standard">🛵 Padrão Plataformas de Delivery (1200x900 - 4:3)</option>
               <option value="square_catalog">🔲 Catálogo Quadrado (800x800 - 1:1)</option>
               <option value="hd_showcase">🖥️ Banner Vitrine HD (1280x720 - 16:9)</option>
               <option value="original">📐 Manter Dimensões Originais</option>
@@ -159,7 +159,11 @@
           <div class="space-y-2.5 pt-1">
             <label class="flex items-center gap-2.5 text-sm text-slate-300 cursor-pointer">
               <input id="remove_background" type="checkbox" checked class="w-4 h-4 accent-red-600 rounded" />
-              <span>Recortar fundo original com IA (U²-Net)</span>
+              <span>Recortar fundo original com IA (IS-Net Alta Precisão)</span>
+            </label>
+            <label class="flex items-center gap-2.5 text-sm text-slate-300 cursor-pointer">
+              <input id="preserve_plate_rim" type="checkbox" checked class="w-4 h-4 accent-red-600 rounded" />
+              <span>🍽️ Preservar borda do prato/louça (Evitar comida flutuando)</span>
             </label>
             <label class="flex items-center gap-2.5 text-sm text-slate-300 cursor-pointer">
               <input id="add_contact_shadow" type="checkbox" checked class="w-4 h-4 accent-red-600 rounded" />
@@ -199,7 +203,7 @@
             <div class="text-4xl mb-3">🍽️</div>
             <p class="text-sm font-semibold text-slate-300">Nenhuma foto carregada ainda</p>
             <p class="text-xs text-slate-500 max-w-md mt-1">
-              Envie a foto de um prato à esquerda ou clique em <button onclick="loadSampleBurger()" class="text-amber-400 underline font-semibold">Gerar Foto Demo para Testar</button> para ver o recorte, correção de iluminação e fundo de estúdio em ação.
+              Envie a foto de um prato à esquerda ou clique em <button onclick="loadSampleBurger()" class="text-amber-400 underline font-semibold">Gerar Foto Demo para Testar</button> para ver o recorte preservando o prato, correção de iluminação e fundo de estúdio em ação.
             </p>
           </div>
 
@@ -258,17 +262,161 @@
       </div>
     </section>
 
-    <!-- TAB 2: SELLER PHOTOGRAPHY GUIDE -->
+    <!-- TAB 2: SELLER VISUAL PHOTOGRAPHY GUIDE -->
     <section id="tab-guide" class="hidden space-y-8">
+      <!-- Visual Diagrams Section: Angles, Lighting, and Framing -->
+      <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl space-y-6">
+        <div>
+          <span class="text-xs font-bold uppercase tracking-wider text-red-400">Manual Visual Interativo</span>
+          <h2 class="text-xl font-extrabold text-white mt-0.5">📐 Diagramas Visuais: Ângulo, Iluminação e Enquadramento</h2>
+          <p class="text-sm text-slate-400 mt-1">
+            Veja abaixo as ilustrações técnicas de como posicionar seu celular, de onde a luz deve vir e como enquadrar o prato inteiro para que o recorte da IA fique perfeito.
+          </p>
+        </div>
+
+        <div class="grid grid-cols-1 lg:grid-cols-3 gap-6">
+          <!-- Diagram 1: Camera Angles (45 deg vs 90 deg vs 0 deg) -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-amber-500/10 text-amber-400 border border-amber-500/20">1. Ângulo da Câmera</span>
+                <span class="text-xs text-slate-400">30° a 45° ou 90°</span>
+              </div>
+              <!-- SVG Diagram: Camera Angles -->
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 mb-4">
+                <svg viewBox="0 0 320 190" class="w-full h-44">
+                  <!-- Table surface -->
+                  <line x1="20" y1="155" x2="300" y2="155" stroke="#475569" stroke-width="3" />
+                  <!-- Plate & Food -->
+                  <ellipse cx="185" cy="150" rx="58" ry="12" fill="#e2e8f0" stroke="#94a3b8" stroke-width="2" />
+                  <!-- Burger/Dish dome -->
+                  <path d="M145 147 Q185 100 225 147 Z" fill="#d97706" />
+                  <ellipse cx="185" cy="138" rx="36" ry="7" fill="#16a34a" />
+                  <ellipse cx="185" cy="144" rx="38" ry="8" fill="#7c2d12" />
+
+                  <!-- Dashed Angle Arcs -->
+                  <path d="M100 155 A85 85 0 0 1 185 70" fill="none" stroke="#334155" stroke-width="1.5" stroke-dasharray="4 4" />
+
+                  <!-- 45 Degree Ideal Camera -->
+                  <line x1="95" y1="75" x2="175" y2="138" stroke="#22c55e" stroke-width="2" stroke-dasharray="5 3" />
+                  <g transform="translate(72, 55) rotate(38)">
+                    <rect x="0" y="0" width="22" height="36" rx="4" fill="#0f172a" stroke="#22c55e" stroke-width="2.5" />
+                    <circle cx="11" cy="8" r="2.5" fill="#22c55e" />
+                  </g>
+                  <text x="22" y="45" fill="#4ade80" font-size="11" font-weight="bold">✅ 45° (Pratos e Burgers)</text>
+                  <text x="22" y="58" fill="#94a3b8" font-size="9">Mostra topo + altura</text>
+
+                  <!-- 90 Degree Top-Down Camera (Pizza) -->
+                  <line x1="185" y1="42" x2="185" y2="120" stroke="#f59e0b" stroke-width="2" stroke-dasharray="4 3" />
+                  <rect x="167" y="18" width="36" height="20" rx="4" fill="#0f172a" stroke="#f59e0b" stroke-width="2" />
+                  <text x="210" y="28" fill="#fbbf24" font-size="10" font-weight="bold">🍕 90° Topo</text>
+                  <text x="210" y="40" fill="#94a3b8" font-size="9">(Pizzas/Tábuas)</text>
+                </svg>
+              </div>
+              <h4 class="text-sm font-bold text-white">Qual ângulo escolher?</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                O ângulo de <strong class="text-emerald-400">45°</strong> simula a visão de quem está sentado à mesa, mostrando tanto os ingredientes de cima quanto a altura do prato e a borda completa da louça. Use <strong class="text-amber-400">90° (de cima)</strong> apenas para pizzas e porções planas.
+              </p>
+            </div>
+          </div>
+
+          <!-- Diagram 2: Side Natural Lighting vs Direct Flash -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-emerald-500/10 text-emerald-400 border border-emerald-500/20">2. Mapa de Iluminação</span>
+                <span class="text-xs text-slate-400">Luz Lateral Difusa</span>
+              </div>
+              <!-- SVG Diagram: Lighting Setup -->
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 mb-4">
+                <svg viewBox="0 0 320 190" class="w-full h-44">
+                  <!-- Window on the left (Soft Natural Light) -->
+                  <rect x="14" y="35" width="16" height="110" rx="3" fill="#38bdf8" opacity="0.85" />
+                  <text x="36" y="48" fill="#38bdf8" font-size="10" font-weight="bold">☀️ Janela / Luz Suave</text>
+                  <!-- Light rays -->
+                  <polygon points="30,45 160,65 160,145 30,135" fill="url(#lightGrad)" opacity="0.28" />
+                  <defs>
+                    <linearGradient id="lightGrad" x1="0" y1="0" x2="1" y2="0">
+                      <stop offset="0%" stop-color="#38bdf8" />
+                      <stop offset="100%" stop-color="#0f172a" stop-opacity="0" />
+                    </linearGradient>
+                  </defs>
+
+                  <!-- Plate Top View -->
+                  <circle cx="165" cy="105" r="42" fill="#f1f5f9" stroke="#cbd5e1" stroke-width="3" />
+                  <circle cx="165" cy="105" r="28" fill="#ea580c" />
+                  <circle cx="156" cy="96" r="6" fill="#fde047" opacity="0.9" />
+                  <circle cx="174" cy="110" r="8" fill="#16a34a" />
+
+                  <!-- White bounce card on the right -->
+                  <rect x="275" y="45" width="10" height="100" rx="2" fill="#f8fafc" stroke="#94a3b8" stroke-width="1.5" />
+                  <text x="215" y="38" fill="#e2e8f0" font-size="9" font-weight="bold">📄 Rebatedor Branco</text>
+                  <path d="M272 95 L215 102" stroke="#cbd5e1" stroke-width="1.5" stroke-dasharray="3 3" />
+
+                  <!-- Bad Flash Warning -->
+                  <g transform="translate(130, 162)">
+                    <rect x="0" y="0" width="175" height="22" rx="5" fill="#450a0a" stroke="#ef4444" stroke-width="1" />
+                    <text x="10" y="15" fill="#fca5a5" font-size="10" font-weight="bold">❌ Desligue o Flash Direto!</text>
+                  </g>
+                </svg>
+              </div>
+              <h4 class="text-sm font-bold text-white">Como iluminar sem equipamento caro?</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                Posicione o prato ao lado de uma <strong class="text-sky-400">janela com luz natural</strong> (sem sol forte direto). Do lado oposto, apoie uma folha de papel branco ou isopor para rebater a luz e eliminar sombras escuras no prato.
+              </p>
+            </div>
+          </div>
+
+          <!-- Diagram 3: Framing & Complete Plate Rim (Solving floating food) -->
+          <div class="bg-slate-950/80 border border-slate-800 rounded-2xl p-5 flex flex-col justify-between">
+            <div>
+              <div class="flex items-center justify-between mb-3">
+                <span class="text-xs font-bold uppercase px-2.5 py-1 rounded-md bg-red-500/10 text-red-400 border border-red-500/20">3. Enquadramento & Louça</span>
+                <span class="text-xs text-slate-400">Não corte o prato!</span>
+              </div>
+              <!-- SVG Diagram: Correct vs Incorrect Framing -->
+              <div class="bg-slate-900/90 rounded-xl p-3 border border-slate-800/80 mb-4">
+                <svg viewBox="0 0 320 190" class="w-full h-44">
+                  <!-- Left Side: WRONG (Cut plate & camouflaged table) -->
+                  <rect x="12" y="25" width="135" height="135" rx="8" fill="#1e293b" stroke="#ef4444" stroke-width="2" />
+                  <text x="20" y="18" fill="#f87171" font-size="10" font-weight="bold">❌ ERRADO (Cortado)</text>
+                  <!-- Plate zoomed in too much, edges cut off -->
+                  <circle cx="80" cy="95" r="78" fill="#cbd5e1" opacity="0.4" />
+                  <circle cx="80" cy="95" r="46" fill="#b45309" />
+                  <text x="22" y="150" fill="#fca5a5" font-size="9">Borda do prato cortada</text>
+
+                  <!-- Right Side: RIGHT (Full plate with breathing margin & contrast) -->
+                  <rect x="172" y="25" width="135" height="135" rx="8" fill="#0f172a" stroke="#22c55e" stroke-width="2" />
+                  <text x="180" y="18" fill="#4ade80" font-size="10" font-weight="bold">✅ CORRETO (Inteiro)</text>
+                  <!-- Margin guide box -->
+                  <rect x="188" y="41" width="103" height="103" rx="6" fill="none" stroke="#22c55e" stroke-width="1" stroke-dasharray="4 3" />
+                  <!-- Complete plate clearly visible -->
+                  <circle cx="240" cy="92" r="42" fill="#f8fafc" stroke="#94a3b8" stroke-width="2" />
+                  <circle cx="240" cy="92" r="27" fill="#d97706" />
+                  <circle cx="233" cy="86" r="6" fill="#16a34a" />
+                  <text x="183" y="152" fill="#86efac" font-size="9">Prato inteiro + margem</text>
+                </svg>
+              </div>
+              <h4 class="text-sm font-bold text-white">Por que às vezes a IA recorta só a comida?</h4>
+              <p class="text-xs text-slate-400 mt-1">
+                Se você der zoom demais e <strong class="text-red-400">cortar as bordas do prato</strong> na foto original (ou usar prato branco em toalha branca estourada), a IA acha que o prato é a mesa! <strong class="text-emerald-400">Deixe sempre 1 dedo de margem</strong> ao redor do prato inteiro e use uma superfície que contraste com a louça.
+              </p>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <!-- Golden Rules from API -->
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <h2 id="guide-title" class="text-xl font-extrabold text-white">Guia Prático de Fotografia Gastronômica</h2>
+        <h2 id="guide-title" class="text-xl font-extrabold text-white">Regras de Ouro para Fotos de Cardápio</h2>
         <p id="guide-purpose" class="text-sm text-slate-400 mt-1"></p>
 
         <div id="golden-rules-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4 mt-6"></div>
       </div>
 
+      <!-- Category Cards with Visual Icons & Angles -->
       <div class="bg-slate-900/90 border border-slate-800 rounded-2xl p-6 shadow-xl">
-        <h3 class="text-base font-bold text-white mb-4">🍕 Ângulo e Iluminação Ideal por Categoria de Cardápio</h3>
+        <h3 class="text-base font-bold text-white mb-4">🍕 Guia Visual por Categoria de Prato</h3>
         <div id="categories-grid" class="grid grid-cols-1 md:grid-cols-2 gap-4"></div>
       </div>
     </section>
@@ -298,11 +446,51 @@
       document.getElementById('slider-button').style.left = `${val}%`;
     }
 
-    function handleFileSelect(event) {
-      const file = event.target.files[0];
-      if (!file) return;
-      selectedFile = file;
-      document.getElementById('file-label').textContent = `${file.name} (${(file.size / 1024).toFixed(0)} KB)`;
+    // Comprime e redimensiona imagens gigantes no navegador (ex: 12MP/4000px de celular) para no máximo 1600px
+    // antes do upload, evitando "Failed to fetch" ou lentidão de rede
+    async function optimizeImageBeforeUpload(file) {
+      return new Promise((resolve) => {
+        const img = new Image();
+        const url = URL.createObjectURL(file);
+        img.onload = () => {
+          URL.revokeObjectURL(url);
+          const maxDim = 1600;
+          let { width, height } = img;
+          if (width <= maxDim && height <= maxDim && file.size <= 3 * 1024 * 1024) {
+            resolve(file);
+            return;
+          }
+          const scale = maxDim / Math.max(width, height);
+          width = Math.round(width * scale);
+          height = Math.round(height * scale);
+
+          const canvas = document.createElement('canvas');
+          canvas.width = width;
+          canvas.height = height;
+          const ctx = canvas.getContext('2d');
+          ctx.drawImage(img, 0, 0, width, height);
+
+          canvas.toBlob((blob) => {
+            if (!blob) {
+              resolve(file);
+              return;
+            }
+            const cleanName = (file.name || 'prato.jpg').replace(/\.[^/.]+$/, '') + '.jpg';
+            resolve(new File([blob], cleanName, { type: 'image/jpeg' }));
+          }, 'image/jpeg', 0.92);
+        };
+        img.onerror = () => resolve(file);
+        img.src = url;
+      });
+    }
+
+    async function handleFileSelect(event) {
+      const rawFile = event.target.files[0];
+      if (!rawFile) return;
+
+      document.getElementById('file-label').textContent = `Carregando e otimizando ${rawFile.name}...`;
+      selectedFile = await optimizeImageBeforeUpload(rawFile);
+      document.getElementById('file-label').textContent = `${selectedFile.name} (${(selectedFile.size / 1024).toFixed(0)} KB)`;
 
       const reader = new FileReader();
       reader.onload = (e) => {
@@ -312,10 +500,10 @@
         document.getElementById('comparison-wrapper').classList.remove('hidden');
         updateComparisonSlider(50);
       };
-      reader.readAsDataURL(file);
+      reader.readAsDataURL(selectedFile);
     }
 
-    // Gera uma foto realista simulando um hambúrguer mal iluminado em um balcão escuro para demonstração imediata
+    // Gera uma foto realista simulando um hambúrguer no prato em um balcão escuro
     function loadSampleBurger() {
       const canvas = document.createElement('canvas');
       canvas.width = 960;
@@ -334,11 +522,14 @@
       ctx.fillStyle = '#332b24';
       ctx.fillRect(0, 480, 960, 240);
 
-      // Prato cerâmico
+      // Prato cerâmico claro bem definido
       ctx.beginPath();
-      ctx.ellipse(480, 505, 250, 62, 0, 0, Math.PI * 2);
-      ctx.fillStyle = '#9ca3af';
+      ctx.ellipse(480, 500, 255, 70, 0, 0, Math.PI * 2);
+      ctx.fillStyle = '#d1d5db';
       ctx.fill();
+      ctx.lineWidth = 5;
+      ctx.strokeStyle = '#9ca3af';
+      ctx.stroke();
 
       // Pão inferior
       ctx.beginPath();
@@ -422,6 +613,7 @@
         formData.append('framing_preset', document.getElementById('framing_preset').value);
         formData.append('enhancement_intensity', document.getElementById('enhancement_intensity').value);
         formData.append('remove_background', document.getElementById('remove_background').checked);
+        formData.append('preserve_plate_rim', document.getElementById('preserve_plate_rim').checked);
         formData.append('add_contact_shadow', document.getElementById('add_contact_shadow').checked);
 
         const response = await fetch('/api/v1/studio/compare', {
@@ -443,7 +635,7 @@
 
         renderAnalysisReport(data.before_analysis, data.after_analysis);
       } catch (err) {
-        alert('Erro: ' + err.message);
+        alert('Erro ao comunicar com o servidor: ' + err.message + '. Verifique se o servidor FastAPI está rodando em http://localhost:8000.');
       } finally {
         btn.disabled = false;
         btn.innerHTML = originalText;
@@ -474,6 +666,49 @@
       recList.innerHTML = before.recommendations.map(r => `<li>${r}</li>`).join('');
     }
 
+    const CATEGORY_SVGS = [
+      // 0: Burger / Sandwiches (30-45 deg front-diagonal)
+      `<svg viewBox="0 0 120 90" class="w-24 h-20 shrink-0 rounded-lg bg-slate-900 border border-slate-800 p-1.5">
+        <ellipse cx="60" cy="74" rx="44" ry="8" fill="#cbd5e1"/>
+        <rect x="30" y="58" width="60" height="12" rx="5" fill="#b45309"/>
+        <rect x="26" y="46" width="68" height="13" rx="6" fill="#5c2415"/>
+        <polygon points="30,46 90,46 84,54 60,48 40,55" fill="#f59e0b"/>
+        <path d="M30 46 A30 24 0 0 1 90 46 Z" fill="#d97706"/>
+        <line x1="10" y1="22" x2="45" y2="48" stroke="#4ade80" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="8" y="16" fill="#4ade80" font-size="9" font-weight="bold">🎥 30°–45°</text>
+      </svg>`,
+      // 1: Pizza / Flatbreads (90 deg Top-down)
+      `<svg viewBox="0 0 120 90" class="w-24 h-20 shrink-0 rounded-lg bg-slate-900 border border-slate-800 p-1.5">
+        <circle cx="60" cy="52" r="30" fill="#b45309" stroke="#f59e0b" stroke-width="3"/>
+        <circle cx="60" cy="52" r="24" fill="#dc2626"/>
+        <circle cx="52" cy="45" r="4" fill="#fef08a"/>
+        <circle cx="68" cy="48" r="4" fill="#fef08a"/>
+        <circle cx="58" cy="60" r="4" fill="#fef08a"/>
+        <line x1="60" y1="6" x2="60" y2="26" stroke="#fbbf24" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="34" y="13" fill="#fbbf24" font-size="9" font-weight="bold">🎥 90° Topo</text>
+      </svg>`,
+      // 2: Executive Dish / Plate (45 deg with complete rim)
+      `<svg viewBox="0 0 120 90" class="w-24 h-20 shrink-0 rounded-lg bg-slate-900 border border-slate-800 p-1.5">
+        <ellipse cx="62" cy="56" rx="44" ry="24" fill="#f8fafc" stroke="#94a3b8" stroke-width="2"/>
+        <ellipse cx="62" cy="56" rx="32" ry="17" fill="#e2e8f0"/>
+        <ellipse cx="50" cy="54" rx="13" ry="8" fill="#7c2d12"/>
+        <circle cx="72" cy="50" r="8" fill="#facc15"/>
+        <circle cx="70" cy="62" r="6" fill="#16a34a"/>
+        <line x1="12" y1="18" x2="44" y2="45" stroke="#38bdf8" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="8" y="14" fill="#38bdf8" font-size="9" font-weight="bold">🎥 45° Inteiro</text>
+      </svg>`,
+      // 3: Acai / Desserts (45 deg bowl + toppings)
+      `<svg viewBox="0 0 120 90" class="w-24 h-20 shrink-0 rounded-lg bg-slate-900 border border-slate-800 p-1.5">
+        <path d="M32 48 Q60 84 88 48 Z" fill="#581c87" stroke="#c084fc" stroke-width="1.5"/>
+        <ellipse cx="60" cy="48" rx="28" ry="9" fill="#7e22ce"/>
+        <circle cx="50" cy="46" r="5" fill="#ef4444"/>
+        <circle cx="62" cy="45" r="5" fill="#facc15"/>
+        <circle cx="73" cy="47" r="4" fill="#22c55e"/>
+        <line x1="14" y1="20" x2="44" y2="43" stroke="#e879f9" stroke-width="2" stroke-dasharray="3 2"/>
+        <text x="10" y="15" fill="#e879f9" font-size="9" font-weight="bold">🎥 45° Tigela</text>
+      </svg>`
+    ];
+
     async function loadGuideData() {
       const res = await fetch('/api/v1/guide');
       const data = await res.json();
@@ -489,15 +724,18 @@
         </div>
       `).join('');
 
-      document.getElementById('categories-grid').innerHTML = data.category_recommendations.map(cat => `
-        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 space-y-1.5">
-          <div class="flex items-center justify-between">
-            <h4 class="text-sm font-bold text-amber-400">${cat.category}</h4>
-            <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Preset: ${cat.recommended_preset}</span>
+      document.getElementById('categories-grid').innerHTML = data.category_recommendations.map((cat, idx) => `
+        <div class="bg-slate-950/70 border border-slate-800 rounded-xl p-4 flex items-center gap-4">
+          ${CATEGORY_SVGS[idx % CATEGORY_SVGS.length]}
+          <div class="space-y-1.5 flex-1">
+            <div class="flex flex-wrap items-center justify-between gap-2">
+              <h4 class="text-sm font-bold text-amber-400">${cat.category}</h4>
+              <span class="text-[11px] px-2 py-0.5 rounded bg-slate-800 text-slate-300">Preset: ${cat.recommended_preset}</span>
+            </div>
+            <p class="text-xs text-slate-300"><strong>Ângulo:</strong> ${cat.ideal_angle}</p>
+            <p class="text-xs text-slate-300"><strong>Luz:</strong> ${cat.lighting_tip}</p>
+            <p class="text-xs text-slate-400"><strong>Montagem:</strong> ${cat.staging_tip}</p>
           </div>
-          <p class="text-xs text-slate-300"><strong>Ângulo:</strong> ${cat.ideal_angle}</p>
-          <p class="text-xs text-slate-300"><strong>Luz:</strong> ${cat.lighting_tip}</p>
-          <p class="text-xs text-slate-400"><strong>Montagem:</strong> ${cat.staging_tip}</p>
         </div>
       `).join('');
     }

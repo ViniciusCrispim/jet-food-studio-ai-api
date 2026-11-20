@@ -5,6 +5,7 @@
 [![OpenCV](https://img.shields.io/badge/OpenCV-Computer_Vision-5C3EE8?style=for-the-badge&logo=opencv&logoColor=white)](https://opencv.org/)
 [![ONNX Runtime](https://img.shields.io/badge/IS--Net_&_U²--Net-AI_Segmentation-FF6F00?style=for-the-badge)](https://onnxruntime.ai/)
 [![Docker](https://img.shields.io/badge/Docker-Ready-2496ED?style=for-the-badge&logo=docker&logoColor=white)](https://www.docker.com/)
+[![License: MIT](https://img.shields.io/badge/License-MIT-yellow.svg?style=for-the-badge)](./LICENSE)
 
 > **Microsserviço de Visão Computacional e Inteligência Artificial** projetado para auxiliar restaurantes, lanchonetes e estabelecimentos gastronômicos a **padronizarem fotos reais de seus pratos** para plataformas de delivery, eliminando a necessidade de fotos meramente ilustrativas da internet ou de estúdios fotográficos de alto custo.
 
@@ -103,6 +104,7 @@ jet-food-studio-ia/
 ├── .gitignore
 ├── Dockerfile                       # Multi-Stage Build leve com suporte a volume externo de modelos IA
 ├── docker-compose.yml               # Orquestração com Volume Persistente (ai_models_cache) e Healthcheck
+├── LICENSE                          # Licença MIT
 ├── pytest.ini
 ├── requirements.txt
 └── README.md
@@ -261,6 +263,12 @@ docker compose logs -f
 docker build -t jet-food-studio-ia:latest .
 docker run -d -p 8000:8000 -v jet_food_studio_ai_models_cache:/home/appuser/.u2net --name jet-food-studio jet-food-studio-ia:latest
 ```
+
+---
+
+## 📄 Licença
+
+Este projeto está licenciado sob a **Licença MIT** — consulte o arquivo [LICENSE](./LICENSE) para mais detalhes.
 
 ---
 
